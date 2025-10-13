@@ -1,0 +1,20 @@
+{
+  "mcp": {
+    "url": "https://stargate.yingmi.com/mcp/sse?apiKey=YOUR_API_KEY",
+    "_comment_url": "且慢mcp的key，注册地址 https://qieman.com/mcp/landing"
+  },
+
+  "model": {
+    "model_name": "qwen3-max",
+    "_comment_model_name": "大模型版本",
+    "api_key": "YOUR_API_KEY",
+    "_comment_api_key": "调用模型 API 的密钥，请勿泄露",
+    "base_url": "https://apis.iflow.cn/v1",
+    "_comment_base_url": "模型 API 的基础地址，兼容OpenAI API格式"
+  },
+
+  "web_server": {
+    "port": 8082,
+    "_comment_port": "本地 Web 服务监听端口"
+  }
+}

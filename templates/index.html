@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金管理助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/styles/github.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .card-header {
+            background-color: #4a6fdc;
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #4a6fdc;
+            box-shadow: 0 0 0 0.25rem rgba(74, 111, 220, 0.25);
+        }
+        .btn-primary {
+            background-color: #4a6fdc;
+            border-color: #4a6fdc;
+        }
+        .btn-primary:hover {
+            background-color: #3a5fc8;
+            border-color: #3a5fc8;
+        }
+        .output-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .intermediate-output {
+            color: #6c757d;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            border-left: 3px solid #4a6fdc;
+        }
+        .final-output {
+            color: #212529;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            border-left: 3px solid #28a745;
+            margin-top: 10px;
+        }
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .markdown-body table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .markdown-body table th,
+        .markdown-body table td {
+            padding: 6px 13px;
+            border: 1px solid #d1d9e0;
+        }
+        .markdown-body table th {
+            font-weight: 600;
+            background-color: #f6f8fa;
+        }
+        .loading-spinner {
+            display: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-connected {
+            background-color: #28a745;
+        }
+        .status-disconnected {
+            background-color: #dc3545;
+        }
+        .status-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.6/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">基金管理助手</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="question-input" class="form-label">请输入您的问题:</label>
+                        <div>
+                            <span class="status-indicator status-disconnected" id="status-indicator"></span>
+                            <span class="status-text" id="status-text">未连接</span>
+                        </div>
+                    </div>
+                    <textarea class="form-control" id="question-input" rows="3" placeholder="例如: 查询易方达蓝筹精选基金的规模和持有人结构，然后输出pdf"></textarea>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button class="btn btn-primary" id="submit-btn" type="button">
+                        <span class="loading-spinner spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        提交问题
+                    </button>
+                    <button class="btn btn-outline-secondary" id="clear-input-btn" type="button">清空输入</button>
+                    <button class="btn btn-outline-secondary" id="clear-output-btn" type="button">清空输出</button>
+                </div>
+                
+                <div class="mt-4">
+                    <h5>输出结果:</h5>
+                    <div class="output-container" id="output-container">
+                        <p class="text-muted">请输入问题并提交，系统将在此显示处理过程和结果...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>基于AgentScope框架和qieman-mcp服务的基金管理工具</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionInput = document.getElementById('question-input');
+            const submitBtn = document.getElementById('submit-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const outputContainer = document.getElementById('output-container');
+            const loadingSpinner = document.querySelector('.loading-spinner');
+            const statusIndicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            let ws = null;
+            
+            // 初始化WebSocket连接
+            function initWebSocket() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws`;
+                
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = function() {
+                    console.log('WebSocket连接已建立');
+                    statusIndicator.classList.remove('status-disconnected');
+                    statusIndicator.classList.add('status-connected');
+                    statusText.textContent = '已连接';
+                };
+                
+                ws.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'intermediate') {
+                        // 显示中间输出
+                        const intermediateDiv = document.createElement('div');
+                        intermediateDiv.className = 'intermediate-output';
+                        intermediateDiv.textContent = data.message;
+                        outputContainer.appendChild(intermediateDiv);
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                    } else if (data.type === 'result') {
+                        // 显示最终结果
+                        const finalDiv = document.createElement('div');
+                        finalDiv.className = 'final-output';
+                        
+                        // 使用marked库渲染Markdown内容
+                        const markdownContent = document.createElement('div');
+                        markdownContent.className = 'markdown-body';
+                        markdownContent.innerHTML = marked.parse(data.response);
+                        
+                        const resultHeader = document.createElement('div');
+                        resultHeader.innerHTML = '<strong>分析结果:</strong>';
+                        
+                        finalDiv.appendChild(resultHeader);
+                        finalDiv.appendChild(markdownContent);
+                        outputContainer.appendChild(finalDiv);
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                        
+                        // 重置按钮状态
+                        submitBtn.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                    } else if (data.type === 'error') {
+                        // 显示错误信息
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-danger';
+                        errorDiv.textContent = data.message;
+                        outputContainer.appendChild(errorDiv);
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                        
+                        // 重置按钮状态
+                        submitBtn.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                    }
+                };
+                
+                ws.onclose = function() {
+                    console.log('WebSocket连接已关闭');
+                    statusIndicator.classList.remove('status-connected');
+                    statusIndicator.classList.add('status-disconnected');
+                    statusText.textContent = '未连接';
+                    
+                    // 尝试重新连接
+                    setTimeout(initWebSocket, 3000);
+                };
+                
+                ws.onerror = function(error) {
+                    console.error('WebSocket错误:', error);
+                    statusIndicator.classList.remove('status-connected');
+                    statusIndicator.classList.add('status-disconnected');
+                    statusText.textContent = '连接错误';
+                };
+            }
+            
+            // 提交问题
+            submitBtn.addEventListener('click', function() {
+                const question = questionInput.value.trim();
+                if (!question) {
+                    alert('请输入问题');
+                    return;
+                }
+                
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    // 清空之前的结果
+                    outputContainer.innerHTML = '';
+                    
+                    // 显示加载状态
+                    submitBtn.disabled = true;
+                    loadingSpinner.style.display = 'inline-block';
+                    
+                    // 发送问题
+                    ws.send(JSON.stringify({ question: question }));
+                } else {
+                    alert('连接未建立，请稍后再试');
+                }
+            });
+            
+            // 清空输出
+            document.getElementById('clear-output-btn').addEventListener('click', function() {
+                outputContainer.innerHTML = '<p class="text-muted">请输入问题并提交，系统将在此显示处理过程和结果...</p>';
+            });
+            
+            // 清空输入
+            document.getElementById('clear-input-btn').addEventListener('click', function() {
+                questionInput.value = '';
+            });
+            
+            // 支持回车键提交
+            questionInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && event.ctrlKey) {
+                    submitBtn.click();
+                }
+            });
+            
+            // 初始化Markdown渲染器
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } else {
+                        return hljs.highlightAuto(code).value;
+                    }
+                },
+                langPrefix: 'hljs language-',
+                breaks: true,
+                gfm: true
+            });
+            
+            // 初始化WebSocket连接
+            initWebSocket();
+        });
+    </script>
+</body>
+</html>
