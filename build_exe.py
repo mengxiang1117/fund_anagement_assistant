@@ -56,7 +56,7 @@ def build_exe():
         "--noconfirm",  # 不需要确认
         "--onefile",    # 打包成单个exe文件
         "--windowed",   # Windows下不显示控制台窗口
-        "--name", "基金管理工具",  # exe文件名
+        "--name", "基金管理助手",  # exe文件名
         "--icon", "NONE",  # 不使用图标
         "--add-data", f"{project_root / 'templates'}{sep}templates",  # 添加模板目录
         "--hidden-import", "aiohttp",

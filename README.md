@@ -1,4 +1,4 @@
-# 基金管理工具
+# 基金管理助手
 
 基于AgentScope框架和qieman-mcp服务的基金管理助手，提供基金信息查询、分析和投资建议功能。
 
@@ -10,7 +10,7 @@
 
 
 ## Windows可执行文件
-[下载Windows可执行文件](https://qieman.com/mcp/tools)
+[下载Windows可执行文件](https://github.com/mengxiang1117/fund_anagement_assistant/releases/tag/v1.0.0)
 ## 项目结构
 
 ```
