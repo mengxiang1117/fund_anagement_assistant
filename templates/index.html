@@ -140,6 +140,7 @@
                     </button>
                     <button class="btn btn-outline-secondary" id="clear-input-btn" type="button">清空输入</button>
                     <button class="btn btn-outline-secondary" id="clear-output-btn" type="button">清空输出</button>
+                    <button class="btn btn-outline-info" id="history-btn" type="button">查看历史</button>
                 </div>
                 
                 <div class="mt-4">
@@ -276,6 +277,11 @@
             // 清空输入
             document.getElementById('clear-input-btn').addEventListener('click', function() {
                 questionInput.value = '';
+            });
+            
+            // 查看历史记录
+            document.getElementById('history-btn').addEventListener('click', function() {
+                window.open('/history', '_blank');
             });
             
             // 支持回车键提交

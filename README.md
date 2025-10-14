@@ -5,7 +5,7 @@
 ## 功能特点
 
 - 基金管理助手可使用功能，点击查看 [qieman-mcp工具](https://qieman.com/mcp/tools)，[文档说明](https://yingmi.feishu.cn/docx/PRPRds5SBo2MITxHJL2cMPminEf)
-- 图形化界面：易于使用的Web界面和桌面应用
+- 图形化界面：易于使用的Web界面和桌面应用，支持查看和删除历史记录，数据存储在本地文件，安全可靠
 - 兼容OpenAI API格式，可直接调用qieman-mcp服务
 
 
