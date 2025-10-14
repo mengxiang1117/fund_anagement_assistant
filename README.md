@@ -23,8 +23,10 @@
 ├── requirements.txt      # 依赖列表
 ├── templates/
 │   └── index.html        # Web界面模板
-└── logs/
-    └── server.log        # 服务日志
+├── logs/
+│    └── server.log        # 服务日志
+└── results/
+    └── xx.md      # 历史记录文件
 ```
 
 ## 配置说明
