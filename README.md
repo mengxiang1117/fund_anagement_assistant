@@ -19,14 +19,14 @@
 ├── web_server.py          # Web服务端
 ├── web_server_gui.py      # 带图形界面的Web服务端
 ├── build_exe.py           # 打包脚本
-├── config.json           # 配置文件
-├── requirements.txt      # 依赖列表
+├── config.json            # 配置文件
+├── requirements.txt       # 依赖列表
 ├── templates/
-│   └── index.html        # Web界面模板
+│   └── index.html         # Web前端
 ├── logs/
 │    └── server.log        # 服务日志
 └── results/
-    └── xx.md      # 历史记录文件
+    └── xx.md              # 历史记录文件
 ```
 
 ## 配置说明
