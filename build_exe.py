@@ -56,7 +56,7 @@ def build_exe():
         "--noconfirm",  # 不需要确认
         "--onefile",    # 打包成单个exe文件
         "--windowed",   # Windows下不显示控制台窗口
-        "--name", "基金管理助手",  # exe文件名
+        "--name", "fund_anagement_assistant",  # exe文件名
         "--icon", "NONE",  # 不使用图标
         "--add-data", f"{project_root / 'templates'}{sep}templates",  # 添加模板目录
         "--hidden-import", "aiohttp",
@@ -86,7 +86,7 @@ def build_exe():
             print("打包成功完成")
             # 显示生成的exe文件位置
             dist_dir = project_root / "dist"
-            exe_file = dist_dir / "基金管理工具.exe"
+            exe_file = dist_dir / "fund_anagement_assistant.exe"
             if exe_file.exists():
                 print(f"生成的exe文件位置: {exe_file}")
             return True

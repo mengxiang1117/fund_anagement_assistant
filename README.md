@@ -22,7 +22,7 @@
 ├── config.json            # 配置文件
 ├── requirements.txt       # 依赖列表
 ├── templates/
-│   └── index.html         # Web前端
+│   └── index.html         # Web前端HTML文件
 ├── logs/
 │    └── server.log        # 服务日志
 └── results/
