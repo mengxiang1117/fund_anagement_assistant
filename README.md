@@ -22,9 +22,10 @@
 ├── config.json            # 配置文件
 ├── requirements.txt       # 依赖列表
 ├── templates/
-│   └── index.html         # Web前端HTML文件
+│   └── index.html         # 主页面
+|   └── history.html       # 历史记录页面
 ├── logs/
-│    └── server.log        # 服务日志
+│    └── server.log        # 服务运行日志（包含请求和响应，可查看文件获取实时状态）
 └── results/
     └── xx.md              # 历史记录文件
 ```
